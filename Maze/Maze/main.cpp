@@ -14,6 +14,7 @@
 //test 20180824
 
 /// testetstetstet
+//test git ignore
 
 int main(int argc, const char * argv[]) {
     sf::RenderWindow window(sf::VideoMode(640,480),"Maze");
