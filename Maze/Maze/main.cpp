@@ -9,6 +9,12 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 
+
+
+//test 20180824
+
+/// testetstetstet
+
 int main(int argc, const char * argv[]) {
     sf::RenderWindow window(sf::VideoMode(640,480),"Maze");
     while(window.isOpen()){
