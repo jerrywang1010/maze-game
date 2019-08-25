@@ -17,7 +17,7 @@
 //test git ignore
 
 int main(int argc, const char * argv[]) {
-    sf::RenderWindow window(sf::VideoMode(640,480),"Maze");
+    sf::RenderWindow window(sf::VideoMode(450,450),"Maze");
     while(window.isOpen()){
         sf::Event event;
         while(window.pollEvent(event)){
