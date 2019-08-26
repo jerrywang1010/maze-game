@@ -10,17 +10,57 @@
 #include <SFML/Graphics.hpp>
 
 
+using namespace std;
 
 //test 20180824
 
 /// testetstetstet
 //test git ignore
 
+void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, float y_gap, int num_of_walls);
+
+
 int main(int argc, const char * argv[]) {
-    sf::RenderWindow window(sf::VideoMode(450,450),"Maze");
+
+	sf::RenderWindow window(sf::VideoMode(2000, 1000), "Maze");
+
+	sf::Texture texture;
+
+	texture.loadFromFile("brickwall.png");
+	if (!texture.loadFromFile("brickwall.png")) {
+		cout << "can not load image" << endl;
+	}
+	texture.setSmooth(true);
+	texture.setRepeated(true);
+
+	//drawing wall 1
+	sf::Sprite sprite;
+	sprite.setTexture(texture);
+	window.draw(sprite);
+
+	////drawing wall 2
+
+	////sprite.setTexture(texture);
+	//sprite.move(sf::Vector2f(500.f, 500.f));
+	//window.draw(sprite);
+
+
+	////drawing wall 3
+	//sprite.setTexture(texture);
+	//sprite.move(sf::Vector2f(1000.f, -500.f));
+	//window.draw(sprite);
+	
+	drawBrickWall(window, sprite, 300.f, 300.f, 3);
+
+
+	window.display();
+
     while(window.isOpen()){
+
+
         sf::Event event;
         while(window.pollEvent(event)){
+
             switch(event.type){
                 case sf::Event::Closed:
                     window.close();
@@ -99,7 +139,18 @@ int main(int argc, const char * argv[]) {
             
         }
     }
-    window.clear();
+
+	window.clear();
     window.display();
     return 0;
+}
+
+//fuction that draws wall on window, sprite has to be initialize to texture first, x gap is the horizontal distance between two wall
+//y gap is the vertical distance between top of window and of every even walls
+void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, float y_gap, int num_of_walls) {
+	for (int i = 0; i < num_of_walls; i++) {
+		sprite.move(sf::Vector2f(x_gap, y_gap));
+		y_gap = -y_gap;
+		window.draw(sprite);
+	}
 }
