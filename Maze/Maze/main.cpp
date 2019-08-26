@@ -18,7 +18,7 @@ using namespace std;
 //test git ignore
 
 void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, float y_gap, int num_of_walls);
-
+bool collision(int x_gap, int y_gap, int x_pos, int y_pos);
 
 int main(int argc, const char * argv[]) {
 
@@ -50,7 +50,14 @@ int main(int argc, const char * argv[]) {
 	//sprite.move(sf::Vector2f(1000.f, -500.f));
 	//window.draw(sprite);
 	
+	int x_gap = 300;
+	int y_gap = 300;
+
+	int x_pos;
+	int y_pos;
+
 	drawBrickWall(window, sprite, 300.f, 300.f, 3);
+	//first bar 97/768
 
 
 	window.display();
@@ -59,6 +66,7 @@ int main(int argc, const char * argv[]) {
 
 
         sf::Event event;
+		
         while(window.pollEvent(event)){
 
             switch(event.type){
@@ -85,19 +93,21 @@ int main(int argc, const char * argv[]) {
                     
                     break;
                 case sf::Event::MouseWheelMoved:
-                    
+					
+
                     break;
                 case sf::Event::MouseWheelScrolled:
                     
                     break;
                 case sf::Event::MouseButtonPressed:
-                    
+					
                     break;
                 case sf::Event::MouseButtonReleased:
                     
                     break;
                 case sf::Event::MouseMoved:
-                    
+					x_pos = event.mouseMove.x;
+					y_pos = event.mouseMove.y; 
                     break;
                 case sf::Event::MouseEntered:
                     
@@ -138,6 +148,16 @@ int main(int argc, const char * argv[]) {
             }
             
         }
+
+		//if (x_pos < 97 && y_pos < 768) {
+		//	cout << "dead" << endl;
+		//	break;
+		//}
+		
+		if (collision(300, 300, x_pos, y_pos)) {
+			cout << "dead" << endl;
+			break;
+		}
     }
 
 	window.clear();
@@ -153,4 +173,19 @@ void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, flo
 		y_gap = -y_gap;
 		window.draw(sprite);
 	}
+}
+
+//wall is 97x769
+bool collision(int x_gap, int y_gap, int x_pos, int y_pos) {
+	if (x_pos % x_gap < 97) {
+		//odd number
+		if ((x_pos / 300) % 2 == 1) {
+			if (y_pos > 300 && y_pos < 1000) return true;
+		}
+		//even number
+		else {
+			if (y_pos > 0 && y_pos < 769) return true;
+		}
+	}
+	return false;
 }
