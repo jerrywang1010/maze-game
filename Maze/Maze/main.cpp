@@ -100,6 +100,43 @@ int main(int argc, const char * argv[]) {
     Clock.setTexture(clock_brick);
     Clock.setPosition(1925, 50);
     Clock.setRotation(90);
+    
+    sf::Sprite Blood_1;
+    sf::Texture blood_1;
+    blood_1.loadFromFile("blood_1.png");
+    blood_1.setSmooth(true);
+    blood_1.setRepeated(true);
+    Blood_1.setTexture(blood_1);
+    Blood_1.setPosition(1630, 200);
+    Blood_1.setScale(0.5, 0.5);
+    
+    sf::Sprite Blood_2;
+    sf::Texture blood_2;
+    blood_2.loadFromFile("blood_2.png");
+    blood_2.setSmooth(true);
+    blood_2.setRepeated(true);
+    Blood_2.setTexture(blood_2);
+    Blood_2.setPosition(1630, 200);
+    Blood_2.setScale(0.5, 0.5);
+    
+    sf::Sprite Blood_3;
+    sf::Texture blood_3;
+    blood_3.loadFromFile("blood_3.png");
+    blood_3.setSmooth(true);
+    blood_3.setRepeated(true);
+    Blood_3.setTexture(blood_3);
+    Blood_3.setPosition(1630, 200);
+    Blood_3.setScale(0.5, 0.5);
+    
+    sf::Sprite Blood_4;
+    sf::Texture blood_4;
+    blood_4.loadFromFile("blood_4.png");
+    blood_4.setSmooth(true);
+    blood_4.setRepeated(true);
+    Blood_4.setTexture(blood_4);
+    Blood_4.setPosition(1630, 200);
+    Blood_4.setScale(0.5, 0.5);
+    
 
 	////drawing wall 2
 
@@ -268,6 +305,21 @@ int main(int argc, const char * argv[]) {
 		window.draw(exit_sprite);
         window.draw(brick_wall_sprite);
         window.draw(whiteBlock);
+        if(index <= 50){
+            window.draw(Blood_4);
+        }
+        else if(index > 50 && index <= 100){
+            window.draw(Blood_3);
+        }
+        else if(index > 100 && index <= 150){
+            window.draw(Blood_2);
+        }
+        else if(index > 150 && index <= 200){
+            window.draw(Blood_1);
+        }
+        else{
+            break;
+        }
         drawBrickWall(window, brick_wall_sprite, 300.f, 300.f, 5);
         window.draw(myNum);
         window.display();
