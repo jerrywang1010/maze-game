@@ -26,6 +26,23 @@ bool collision(int x_gap, int y_gap, int x_pos, int y_pos);
 int main(int argc, const char * argv[]) {
 
 	sf::RenderWindow window(sf::VideoMode(2000, 1000), "Maze");
+    
+    sf::Image backGround;
+    
+    backGround.loadFromFile("stone.jpg");
+    sf::Texture textureMain;
+    
+    textureMain.loadFromImage(backGround);
+    //textureMain.loadFromFile("stone.jpg");
+    
+    textureMain.setRepeated(true);
+    textureMain.setSmooth(true);
+    
+    
+    sf::Sprite backSprite;
+    
+    backSprite.setTexture(textureMain);
+    backSprite.setPosition(0, 0);
 
 	sf::Texture texture;
 
@@ -44,11 +61,20 @@ int main(int argc, const char * argv[]) {
     
     sf::Sprite background;
     sf::Texture backTexture;
-    backTexture.loadFromFile("white_large.jpg");
+    backTexture.loadFromFile("stone_light.jpg");
     backTexture.setSmooth(true);
     backTexture.setRepeated(true);
     background.setTexture(backTexture);
     background.setPosition(1600, 0);
+    
+    sf::Sprite Clock;
+    sf::Texture clock_brick;
+    clock_brick.loadFromFile("clock_BG.png");
+    clock_brick.setRepeated(true);
+    clock_brick.setSmooth(true);
+    Clock.setTexture(clock_brick);
+    Clock.setPosition(1925, 50);
+    Clock.setRotation(90);
 
 	////drawing wall 2
 
@@ -178,28 +204,42 @@ int main(int argc, const char * argv[]) {
         }
         
         int time = clock.getElapsedTime().asSeconds();
-        int seconds = 0;
-        int minute = 0;
+        int seconds_0 = 0;
+        int seconds_1 = 0;
+        int minute_0 = 0;
+        int minute_1 = 0;
         
-        seconds = time%60;
-        minute = time/60;
+        if(time<60){
+            seconds_0 = time%10;
+            seconds_1 = time/10;
+        }
+        else{
+            int seconds = time%60;
+            int minute = time/60;
+            seconds_0 = seconds%10;
+            seconds_1 = seconds/10;
+            minute_0 = minute%10;
+            minute_1 = minute/10;
+        }
         
         
         stringstream ss;
-        ss << minute << ":" <<seconds;
+        ss << minute_1 << " "<< minute_0 << " : " << seconds_1 <<" " << seconds_0 ;
         myNum.setString(ss.str().c_str());
         sf::Font arial;
         arial.loadFromFile("arial.ttf");
-        myNum.setCharacterSize(50);
+        myNum.setCharacterSize(60);
         myNum.setFont(arial);
-        myNum.setFillColor(sf::Color::Red);
-        myNum.setPosition(1750, 50);
+        myNum.setFillColor(sf::Color(139,0,0));
+        myNum.setPosition(1695, 50);
         
         window.clear();
-        window.draw(sprite);
-        window.draw(background);
-        drawBrickWall(window, sprite, 300.f, 300.f, 5);
-        window.draw(myNum);
+        window.draw(backSprite);//draw main game board background
+        window.draw(sprite);//draw first brick
+        window.draw(background);//draw score board background
+        window.draw(Clock);//draw clock background
+        drawBrickWall(window, sprite, 300.f, 300.f, 5);//draw brick wall pattern
+        window.draw(myNum);//draw clock with numbers
         window.display();
 
     }
