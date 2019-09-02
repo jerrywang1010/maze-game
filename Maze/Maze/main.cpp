@@ -8,6 +8,8 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
+#include <unistd.h>
+#include <sstream>
 
 
 using namespace std;
@@ -17,6 +19,7 @@ using namespace std;
 /// testetstetstet
 //test git ignore
 
+void drawClock(sf::RenderWindow& window,sf::Text myNum);
 void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, float y_gap, int num_of_walls);
 bool collision(int x_gap, int y_gap, int x_pos, int y_pos);
 
@@ -27,6 +30,7 @@ int main(int argc, const char * argv[]) {
 	sf::Texture texture;
 
 	texture.loadFromFile("brickwall.png");
+    //texture.loadFromFile("/Users/nan/Desktop/projects/maze/brickwall.png");
 	if (!texture.loadFromFile("brickwall.png")) {
 		cout << "can not load image" << endl;
 	}
@@ -37,6 +41,8 @@ int main(int argc, const char * argv[]) {
 	sf::Sprite sprite;
 	sprite.setTexture(texture);
 	window.draw(sprite);
+    
+    
 
 	////drawing wall 2
 
@@ -53,20 +59,26 @@ int main(int argc, const char * argv[]) {
 	int x_gap = 300;
 	int y_gap = 300;
 
-	int x_pos;
-	int y_pos;
+	int x_pos = 0;
+    int y_pos = 0;
 
 	drawBrickWall(window, sprite, 300.f, 300.f, 3);
 	//first bar 97/768
+    
+    
+    
+    sf::Text myNum;
+    //window.display();
 
+    
 
-	window.display();
+    int index = 0;
 
     while(window.isOpen()){
 
 
         sf::Event event;
-		
+        
         while(window.pollEvent(event)){
 
             switch(event.type){
@@ -148,23 +160,52 @@ int main(int argc, const char * argv[]) {
             }
             
         }
-
-		//if (x_pos < 97 && y_pos < 768) {
-		//	cout << "dead" << endl;
-		//	break;
-		//}
 		
 		if (collision(300, 300, x_pos, y_pos)) {
-			cout << "dead" << endl;
-			break;
+            index++;
+			cout << index << endl;
 		}
+        
+        
+        stringstream ss;
+        ss << index;
+        myNum.setString(ss.str().c_str());
+        sf::Font arial;
+        arial.loadFromFile("arial.ttf");
+        myNum.setCharacterSize(50);
+        myNum.setFont(arial);
+        myNum.setFillColor(sf::Color::Red);
+        myNum.setPosition(1500, 500);
+        window.clear();
+        window.draw(myNum);
+        window.draw(sprite);
+        drawBrickWall(window, sprite, 300.f, 300.f, 3);
+        window.display();
+
     }
 
-	window.clear();
+    window.clear();
     window.display();
     return 0;
 }
 
+
+void drawClock(sf::RenderWindow& window,sf::Text myNum){
+        sf::Font arial;
+        if(!arial.loadFromFile("arial.ttf")){
+            cout << "can't load font" << endl;
+        }
+        //myNum.setString("hello world");
+        //myNum.setString(ss.str());
+        myNum.setCharacterSize(50);
+        myNum.setFont(arial);
+        myNum.setFillColor(sf::Color::Red);
+        myNum.setPosition(1500,500);
+        window.clear();
+        window.draw(myNum);
+        window.display();
+    
+}
 //fuction that draws wall on window, sprite has to be initialize to texture first, x gap is the horizontal distance between two wall
 //y gap is the vertical distance between top of window and of every even walls
 void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, float y_gap, int num_of_walls) {

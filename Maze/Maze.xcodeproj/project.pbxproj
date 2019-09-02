@@ -268,7 +268,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = /Users/nan/Desktop/SFML/include;
 				LIBRARY_SEARCH_PATHS = /Users/nan/Desktop/SFML/lib;
+				MTL_ENABLE_DEBUG_INFO = Yes;
+				NEW_SETTING = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYMROOT = "Users/nan/Desktop/projects/maze-game/build";
 			};
 			name = Debug;
 		};
@@ -278,7 +281,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				HEADER_SEARCH_PATHS = /Users/nan/Desktop/SFML/include;
 				LIBRARY_SEARCH_PATHS = /Users/nan/Desktop/SFML/lib;
+				MTL_ENABLE_DEBUG_INFO = No;
+				NEW_SETTING = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SYMROOT = "Users/nan/Desktop/projects/maze-game/build";
 			};
 			name = Release;
 		};
