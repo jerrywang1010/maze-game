@@ -42,7 +42,13 @@ int main(int argc, const char * argv[]) {
 	sprite.setTexture(texture);
 	window.draw(sprite);
     
-    
+    sf::Sprite background;
+    sf::Texture backTexture;
+    backTexture.loadFromFile("white_large.jpg");
+    backTexture.setSmooth(true);
+    backTexture.setRepeated(true);
+    background.setTexture(backTexture);
+    background.setPosition(1600, 0);
 
 	////drawing wall 2
 
@@ -70,7 +76,7 @@ int main(int argc, const char * argv[]) {
     sf::Text myNum;
     //window.display();
 
-    
+    sf::Clock clock;
 
     int index = 0;
 
@@ -112,7 +118,8 @@ int main(int argc, const char * argv[]) {
                     
                     break;
                 case sf::Event::MouseButtonPressed:
-					
+                    cout << event.mouseButton.x << endl;
+                    cout << event.mouseButton.y << endl;
                     break;
                 case sf::Event::MouseButtonReleased:
                     
@@ -166,20 +173,33 @@ int main(int argc, const char * argv[]) {
 			cout << index << endl;
 		}
         
+        if(x_pos <= 1000){
+            clock.restart();
+        }
+        
+        int time = clock.getElapsedTime().asSeconds();
+        int seconds = 0;
+        int minute = 0;
+        
+        seconds = time%60;
+        minute = time/60;
+        
         
         stringstream ss;
-        ss << index;
+        ss << minute << ":" <<seconds;
         myNum.setString(ss.str().c_str());
         sf::Font arial;
         arial.loadFromFile("arial.ttf");
         myNum.setCharacterSize(50);
         myNum.setFont(arial);
         myNum.setFillColor(sf::Color::Red);
-        myNum.setPosition(1500, 500);
+        myNum.setPosition(1750, 50);
+        
         window.clear();
-        window.draw(myNum);
         window.draw(sprite);
-        drawBrickWall(window, sprite, 300.f, 300.f, 3);
+        window.draw(background);
+        drawBrickWall(window, sprite, 300.f, 300.f, 5);
+        window.draw(myNum);
         window.display();
 
     }
@@ -200,12 +220,13 @@ void drawClock(sf::RenderWindow& window,sf::Text myNum){
         myNum.setCharacterSize(50);
         myNum.setFont(arial);
         myNum.setFillColor(sf::Color::Red);
-        myNum.setPosition(1500,500);
+        myNum.setPosition(1400,20);
         window.clear();
         window.draw(myNum);
         window.display();
     
 }
+
 //fuction that draws wall on window, sprite has to be initialize to texture first, x gap is the horizontal distance between two wall
 //y gap is the vertical distance between top of window and of every even walls
 void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, float y_gap, int num_of_walls) {
