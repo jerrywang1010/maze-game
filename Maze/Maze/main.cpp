@@ -8,7 +8,6 @@
 
 #include <iostream>
 #include <SFML/Graphics.hpp>
-#include <unistd.h>
 #include <sstream>
 
 
@@ -44,28 +43,54 @@ int main(int argc, const char * argv[]) {
     backSprite.setTexture(textureMain);
     backSprite.setPosition(0, 0);
 
-	sf::Texture texture;
-
-	texture.loadFromFile("brickwall.png");
-    //texture.loadFromFile("/Users/nan/Desktop/projects/maze/brickwall.png");
-	if (!texture.loadFromFile("brickwall.png")) {
-		cout << "can not load image" << endl;
+    // load background
+	sf::Texture background_texture;
+	sf::Sprite background_sprite;
+	background_texture.loadFromFile("background.png");
+	if (!background_texture.loadFromFile("background.png")) {
+		cout << "can not load background" << endl;
 	}
-	texture.setSmooth(true);
-	texture.setRepeated(true);
+	background_texture.setSmooth(true);
+	background_sprite.setTexture(background_texture);
+	//window.draw(background_sprite);
+
+
+	//load entrance sprite
+	sf::Texture entrance_texture;
+	sf::Sprite entrance_sprite;
+	entrance_texture.loadFromFile("entrance.png");
+	if (!entrance_texture.loadFromFile("entrance.png")) {
+		cout << "can not load entrance" << endl;
+	}
+	entrance_texture.setSmooth(true);
+	entrance_sprite.setTexture(entrance_texture);
+	entrance_sprite.setPosition(0, 800);
+
+
+	//load exit sprite
+	sf::Sprite exit_sprite = entrance_sprite;
+	exit_sprite.setPosition(1500, 100);
+
+	sf::Texture brick_wall_texture;
+	brick_wall_texture.loadFromFile("brickwall.png");
+	if (!brick_wall_texture.loadFromFile("brickwall.png")) {
+		cout << "can not load brick" << endl;
+	}
+	brick_wall_texture.setSmooth(true);
+	brick_wall_texture.setRepeated(true);
 
 	//drawing wall 1
-	sf::Sprite sprite;
-	sprite.setTexture(texture);
-	window.draw(sprite);
+	sf::Sprite brick_wall_sprite;
+	brick_wall_sprite.setTexture(brick_wall_texture);
+	//window.draw(brick_wall_sprite);
     
-    sf::Sprite background;
+    sf::Sprite whiteBlock;
     sf::Texture backTexture;
     backTexture.loadFromFile("stone_light.jpg");
     backTexture.setSmooth(true);
     backTexture.setRepeated(true);
-    background.setTexture(backTexture);
-    background.setPosition(1600, 0);
+    whiteBlock.setTexture(backTexture);
+    whiteBlock.setPosition(1600, 0);
     
     sf::Sprite Clock;
     sf::Texture clock_brick;
@@ -82,11 +107,9 @@ int main(int argc, const char * argv[]) {
 	//sprite.move(sf::Vector2f(500.f, 500.f));
 	//window.draw(sprite);
 
+//    whiteBlock.setTexture(backTexture);
+//    whiteBlock.setPosition(1600, 0);
 
-	////drawing wall 3
-	//sprite.setTexture(texture);
-	//sprite.move(sf::Vector2f(1000.f, -500.f));
-	//window.draw(sprite);
 	
 	int x_gap = 300;
 	int y_gap = 300;
@@ -94,7 +117,7 @@ int main(int argc, const char * argv[]) {
 	int x_pos = 0;
     int y_pos = 0;
 
-	drawBrickWall(window, sprite, 300.f, 300.f, 3);
+	drawBrickWall(window, brick_wall_sprite, 300.f, 300.f, 3);
 	//first bar 97/768
     
     
@@ -234,12 +257,19 @@ int main(int argc, const char * argv[]) {
         myNum.setPosition(1695, 50);
         
         window.clear();
-        window.draw(backSprite);//draw main game board background
-        window.draw(sprite);//draw first brick
-        window.draw(background);//draw score board background
-        window.draw(Clock);//draw clock background
-        drawBrickWall(window, sprite, 300.f, 300.f, 5);//draw brick wall pattern
-        window.draw(myNum);//draw clock with numbers
+       // window.draw(backSprite);//draw main game board background
+        //window.draw(sprite);//draw first brick
+        //window.draw(background);//draw score board background
+        //window.draw(Clock);//draw clock background
+        //drawBrickWall(window, sprite, 300.f, 300.f, 5);//draw brick wall pattern
+        //window.draw(myNum);//draw clock with numbers
+		window.draw(background_sprite);
+		window.draw(entrance_sprite);
+		window.draw(exit_sprite);
+        window.draw(brick_wall_sprite);
+        window.draw(whiteBlock);
+        drawBrickWall(window, brick_wall_sprite, 300.f, 300.f, 5);
+        window.draw(myNum);
         window.display();
 
     }
