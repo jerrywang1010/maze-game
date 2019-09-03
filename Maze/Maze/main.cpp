@@ -9,20 +9,67 @@
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include <sstream>
+#include <vector>
+#include "C:\Users\jerry\source\repos\Jolie-Ni\maze-game/coordinate.h"
+#include "C:\Users\jerry\source\repos\Jolie-Ni\maze-game/obstacle.h"
+#include <unordered_set>
+#include <array>
 
+
+namespace std
+{
+	template<typename T, size_t N>
+	struct hash<array<T, N> >
+	{
+		typedef array<T, N> argument_type;
+		typedef size_t result_type;
+
+		result_type operator()(const argument_type& a) const
+		{
+			hash<T> hasher;
+			result_type h = 0;
+			for (result_type i = 0; i < N; ++i)
+			{
+				h = h * 31 + hasher(a[i]);
+			}
+			return h;
+		}
+	};
+}
 
 using namespace std;
 
-//test 20180824
-
-/// testetstetstet
-//test git ignore
-
 void drawClock(sf::RenderWindow& window,sf::Text myNum);
-void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, float y_gap, int num_of_walls);
-bool collision(int x_gap, int y_gap, int x_pos, int y_pos);
+void drawObstalce(sf::RenderWindow& window, sf::Sprite sprite, vector <obstacle> walls);
+void moveObstacle(sf::RenderWindow& window, sf::Sprite sprite, vector <obstacle>& walls, int index, bool move_right, bool move_left, bool move_up, bool move_down);
+bool collision(unordered_set<array<int, 2>>& set, int x_pos, int y_pos);
+void deleteGameArray(int** gameArray);
+void updateSet(unordered_set<array<int, 2>>& set, vector<obstacle> walls);
 
 int main(int argc, const char * argv[]) {
+	//test new class
+
+
+	//2D array that contains all the pixel locations on the screen
+	//1 means occupied by a obstacle and 0 means unoccupied.
+	//int gameArray[1600][1000];
+
+	//have to initialize the array dynamically to avoid memeory overflow.
+	//int** gameArray = new int* [1000];
+	//for (int i = 0; i < 1000; i++) {
+	//	gameArray[i] = new int[1600];
+	//}
+	unordered_set<array<int, 2>> set;
+
+	// vector containing all brick walls
+	vector <obstacle> walls;
+	for (int i = 0; i < 4; i++) {
+		coordinate c(i * 200, 0);
+		obstacle o(769, 96, c, 0);
+		walls.push_back(o);
+	}
+
+	updateSet(set, walls);
 
 	sf::RenderWindow window(sf::VideoMode(2000, 1000), "Maze");
 
@@ -35,14 +82,14 @@ int main(int argc, const char * argv[]) {
 	}
 	background_texture.setSmooth(true);
 	background_sprite.setTexture(background_texture);
-	//window.draw(background_sprite);
+
 
 
 	//load entrance sprite
 	sf::Texture entrance_texture;
 	sf::Sprite entrance_sprite;
-	entrance_texture.loadFromFile("entrance.png");
-	if (!entrance_texture.loadFromFile("entrance.png")) {
+	entrance_texture.loadFromFile("white_entrance.png");
+	if (!entrance_texture.loadFromFile("white_entrance.png")) {
 		cout << "can not load entrance" << endl;
 	}
 	entrance_texture.setSmooth(true);
@@ -65,7 +112,6 @@ int main(int argc, const char * argv[]) {
 	//drawing wall 1
 	sf::Sprite brick_wall_sprite;
 	brick_wall_sprite.setTexture(brick_wall_texture);
-	//window.draw(brick_wall_sprite);
     
     sf::Sprite whiteBlock;
     sf::Texture backTexture;
@@ -82,8 +128,7 @@ int main(int argc, const char * argv[]) {
 	int x_pos = 0;
     int y_pos = 0;
 
-	drawBrickWall(window, brick_wall_sprite, 300.f, 300.f, 3);
-	//first bar 97/768
+	//brick wall is 96 x 769
     
     
     
@@ -182,11 +227,14 @@ int main(int argc, const char * argv[]) {
             
         }
 		
-		if (collision(300, 300, x_pos, y_pos)) {
-            index++;
-			cout << index << endl;
+
+		if (collision(set, x_pos, y_pos)) {
+			cout << "collision !!!" << endl;
 		}
-        
+		else {
+			cout << "not !!" << endl;
+		}
+ 
         if(x_pos <= 1000){
             clock.restart();
         }
@@ -215,7 +263,9 @@ int main(int argc, const char * argv[]) {
 		window.draw(exit_sprite);
         window.draw(brick_wall_sprite);
         window.draw(whiteBlock);
-        drawBrickWall(window, brick_wall_sprite, 300.f, 300.f, 5);
+		//drawObstalce(window, brick_wall_sprite, walls);
+		moveObstacle(window, brick_wall_sprite, walls, 3, true, false, false, false);
+		updateSet(set, walls);
         window.draw(myNum);
         window.display();
 
@@ -223,7 +273,16 @@ int main(int argc, const char * argv[]) {
 
     window.clear();
     window.display();
+	
     return 0;
+}
+
+//delete game array
+void deleteGameArray(int** gameArray) {
+	for (int i = 0; i < 1000; i++) {
+		delete gameArray[i];
+	}
+	delete gameArray;
 }
 
 
@@ -246,25 +305,78 @@ void drawClock(sf::RenderWindow& window,sf::Text myNum){
 
 //fuction that draws wall on window, sprite has to be initialize to texture first, x gap is the horizontal distance between two wall
 //y gap is the vertical distance between top of window and of every even walls
-void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, float y_gap, int num_of_walls) {
-	for (int i = 0; i < num_of_walls; i++) {
-		sprite.move(sf::Vector2f(x_gap, y_gap));
-		y_gap = -y_gap;
+//void drawBrickWall(sf::RenderWindow& window, sf::Sprite sprite, float x_gap, float y_gap, int num_of_walls) {
+//	for (int i = 0; i < num_of_walls; i++) {
+//		sprite.move(sf::Vector2f(x_gap, y_gap));
+//		y_gap = -y_gap;
+//		window.draw(sprite);
+//	}
+//}
+
+bool collision(unordered_set<array<int, 2>>& set, int x_pos, int y_pos) {
+	if (x_pos >= 1600 || x_pos < 0) return false;
+	if (y_pos < 0 || y_pos >= 1000) return false;
+
+	//return gameArray[x_pos][y_pos] == 1;
+	array<int, 2> key = { x_pos, y_pos };
+	auto search = set.find(key);
+
+	return search != set.end();
+}
+
+void updateSet(unordered_set<array<int, 2>>& set, vector<obstacle> walls) {
+	set.clear();
+	for (int i = 0; i < walls.size(); i++) {
+		coordinate top_left = walls[i].getCoordinate();
+		int x = top_left.getX();
+		int y = top_left.getY();
+		int height = walls[i].getHeight();
+		int width = walls[i].getWidth();
+
+		for (int row = x; row >= 0 && row < x + width; row++) {
+			for (int col = y; col >= 0 && col < y + height; col++) {
+				array<int, 2> arr = { row, col };
+				set.insert(arr);
+			}
+		}
+	}
+}
+
+
+//wall is 97x769
+
+void drawObstalce(sf::RenderWindow& window, sf::Sprite sprite, vector <obstacle> walls) {
+	for (int i = 0; i < walls.size(); i++) {
+		sprite.setPosition(walls[i].getCoordinate().getX(), walls[i].getCoordinate().getY());
+		sprite.setRotation(walls[i].getAngle());
 		window.draw(sprite);
 	}
 }
 
-//wall is 97x769
-bool collision(int x_gap, int y_gap, int x_pos, int y_pos) {
-	if (x_pos % x_gap < 97) {
-		//odd number
-		if ((x_pos / 300) % 2 == 1) {
-			if (y_pos > 300 && y_pos < 1000) return true;
-		}
-		//even number
-		else {
-			if (y_pos > 0 && y_pos < 769) return true;
-		}
+//move the piece of wall indiceted by index in vector walls in the direction specified
+void moveObstacle(sf::RenderWindow& window, sf::Sprite sprite, vector <obstacle>& walls, int index, bool move_right, bool move_left, bool move_up, bool move_down) {
+	obstacle oldWall = walls[index];
+	obstacle newWall(oldWall.getHeight(), oldWall.getWidth(), oldWall.getCoordinate(), oldWall.getAngle());
+	coordinate oldCoordinate = oldWall.getCoordinate();
+	if (move_right && oldCoordinate.getX() < 1600 - 97) {
+		coordinate newCoordinate(oldCoordinate.getX() + 1, oldCoordinate.getY());
+		newWall.setCoordinate(newCoordinate);
+		walls[index] = newWall;
 	}
-	return false;
+	else if (move_left && oldCoordinate.getX() > 0) {
+		coordinate newCoordinate(oldCoordinate.getX() - 1, oldCoordinate.getY());
+		newWall.setCoordinate(newCoordinate);
+		walls[index] = newWall;
+	}
+	else if (move_up && oldCoordinate.getY() > 0) {
+		coordinate newCoordinate(oldCoordinate.getX(), oldCoordinate.getY() - 1);
+		newWall.setCoordinate(newCoordinate);
+		walls[index] = newWall;
+	}
+	else if (move_down && oldCoordinate.getY() < 1000 - 769) {
+		coordinate newCoordinate(oldCoordinate.getX(), oldCoordinate.getY() + 1);
+		newWall.setCoordinate(newCoordinate);
+		walls[index] = newWall;
+	}
+	drawObstalce(window, sprite, walls);
 }
