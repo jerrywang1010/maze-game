@@ -72,6 +72,23 @@ int main(int argc, const char * argv[]) {
 	updateSet(set, walls);
 
 	sf::RenderWindow window(sf::VideoMode(2000, 1000), "Maze");
+    
+    sf::Image backGround;
+    
+    backGround.loadFromFile("stone.jpg");
+    sf::Texture textureMain;
+    
+    textureMain.loadFromImage(backGround);
+    //textureMain.loadFromFile("stone.jpg");
+    
+    textureMain.setRepeated(true);
+    textureMain.setSmooth(true);
+    
+    
+    sf::Sprite backSprite;
+    
+    backSprite.setTexture(textureMain);
+    backSprite.setPosition(0, 0);
 
     // load background
 	sf::Texture background_texture;
@@ -115,11 +132,66 @@ int main(int argc, const char * argv[]) {
     
     sf::Sprite whiteBlock;
     sf::Texture backTexture;
-    backTexture.loadFromFile("white_large.jpg");
+    backTexture.loadFromFile("stone_light.jpg");
     backTexture.setSmooth(true);
     backTexture.setRepeated(true);
     whiteBlock.setTexture(backTexture);
     whiteBlock.setPosition(1600, 0);
+    
+    sf::Sprite Clock;
+    sf::Texture clock_brick;
+    clock_brick.loadFromFile("clock_BG.png");
+    clock_brick.setRepeated(true);
+    clock_brick.setSmooth(true);
+    Clock.setTexture(clock_brick);
+    Clock.setPosition(1925, 50);
+    Clock.setRotation(90);
+    
+    sf::Sprite Blood_1;
+    sf::Texture blood_1;
+    blood_1.loadFromFile("blood_1.png");
+    blood_1.setSmooth(true);
+    blood_1.setRepeated(true);
+    Blood_1.setTexture(blood_1);
+    Blood_1.setPosition(1630, 200);
+    Blood_1.setScale(0.5, 0.5);
+    
+    sf::Sprite Blood_2;
+    sf::Texture blood_2;
+    blood_2.loadFromFile("blood_2.png");
+    blood_2.setSmooth(true);
+    blood_2.setRepeated(true);
+    Blood_2.setTexture(blood_2);
+    Blood_2.setPosition(1630, 200);
+    Blood_2.setScale(0.5, 0.5);
+    
+    sf::Sprite Blood_3;
+    sf::Texture blood_3;
+    blood_3.loadFromFile("blood_3.png");
+    blood_3.setSmooth(true);
+    blood_3.setRepeated(true);
+    Blood_3.setTexture(blood_3);
+    Blood_3.setPosition(1630, 200);
+    Blood_3.setScale(0.5, 0.5);
+    
+    sf::Sprite Blood_4;
+    sf::Texture blood_4;
+    blood_4.loadFromFile("blood_4.png");
+    blood_4.setSmooth(true);
+    blood_4.setRepeated(true);
+    Blood_4.setTexture(blood_4);
+    Blood_4.setPosition(1630, 200);
+    Blood_4.setScale(0.5, 0.5);
+    
+
+	////drawing wall 2
+
+	////sprite.setTexture(texture);
+	//sprite.move(sf::Vector2f(500.f, 500.f));
+	//window.draw(sprite);
+
+//    whiteBlock.setTexture(backTexture);
+//    whiteBlock.setPosition(1600, 0);
 
 	
 	int x_gap = 300;
@@ -240,29 +312,63 @@ int main(int argc, const char * argv[]) {
         }
         
         int time = clock.getElapsedTime().asSeconds();
-        int seconds = 0;
-        int minute = 0;
+        int seconds_0 = 0;
+        int seconds_1 = 0;
+        int minute_0 = 0;
+        int minute_1 = 0;
         
-        seconds = time%60;
-        minute = time/60;
+        if(time<60){
+            seconds_0 = time%10;
+            seconds_1 = time/10;
+        }
+        else{
+            int seconds = time%60;
+            int minute = time/60;
+            seconds_0 = seconds%10;
+            seconds_1 = seconds/10;
+            minute_0 = minute%10;
+            minute_1 = minute/10;
+        }
         
         
         stringstream ss;
-        ss << minute << ":" <<seconds;
+        ss << minute_1 << " "<< minute_0 << " : " << seconds_1 <<" " << seconds_0 ;
         myNum.setString(ss.str().c_str());
         sf::Font arial;
         arial.loadFromFile("arial.ttf");
-        myNum.setCharacterSize(50);
+        myNum.setCharacterSize(60);
         myNum.setFont(arial);
-        myNum.setFillColor(sf::Color::Red);
-        myNum.setPosition(1750, 50);
+        myNum.setFillColor(sf::Color(139,0,0));
+        myNum.setPosition(1695, 50);
         
         window.clear();
+       // window.draw(backSprite);//draw main game board background
+        //window.draw(sprite);//draw first brick
+        //window.draw(background);//draw score board background
+        //window.draw(Clock);//draw clock background
+        //drawBrickWall(window, sprite, 300.f, 300.f, 5);//draw brick wall pattern
+        //window.draw(myNum);//draw clock with numbers
 		window.draw(background_sprite);
 		window.draw(entrance_sprite);
 		window.draw(exit_sprite);
         window.draw(brick_wall_sprite);
         window.draw(whiteBlock);
+        if(index <= 50){
+            window.draw(Blood_4);
+        }
+        else if(index > 50 && index <= 100){
+            window.draw(Blood_3);
+        }
+        else if(index > 100 && index <= 150){
+            window.draw(Blood_2);
+        }
+        else if(index > 150 && index <= 200){
+            window.draw(Blood_1);
+        }
+        else{
+            break;
+        }
+        drawBrickWall(window, brick_wall_sprite, 300.f, 300.f, 5);
 		//drawObstalce(window, brick_wall_sprite, walls);
 		moveObstacle(window, brick_wall_sprite, walls, 3, true, false, false, false);
 		updateSet(set, walls);
