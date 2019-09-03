@@ -353,6 +353,8 @@ int main(int argc, const char * argv[]) {
 		window.draw(exit_sprite);
         window.draw(brick_wall_sprite);
         window.draw(whiteBlock);
+		moveObstacle(window, brick_wall_sprite, walls, 3, true, false, false, false);
+		updateSet(set, walls);
         if(index <= 50){
             window.draw(Blood_4);
         }
@@ -368,10 +370,6 @@ int main(int argc, const char * argv[]) {
         else{
             break;
         }
-        drawBrickWall(window, brick_wall_sprite, 300.f, 300.f, 5);
-		//drawObstalce(window, brick_wall_sprite, walls);
-		moveObstacle(window, brick_wall_sprite, walls, 3, true, false, false, false);
-		updateSet(set, walls);
         window.draw(myNum);
         window.display();
 
