@@ -45,10 +45,16 @@ void moveObstacle(sf::RenderWindow& window, sf::Sprite sprite, vector <obstacle>
 bool collision(unordered_set<array<int, 2>>& set, int x_pos, int y_pos);
 void deleteGameArray(int** gameArray);
 void updateSet(unordered_set<array<int, 2>>& set, vector<obstacle> walls);
+void rotateObstacles(sf::RenderWindow& window, sf::Sprite sprite, vector<obstacle>& walls, int index, int angle, bool clockwise);
+
+struct Vector2
+{
+	float x;
+	float y;
+};
 
 int main(int argc, const char * argv[]) {
 	//test new class
-
 
 	//2D array that contains all the pixel locations on the screen
 	//1 means occupied by a obstacle and 0 means unoccupied.
@@ -354,6 +360,7 @@ int main(int argc, const char * argv[]) {
         window.draw(brick_wall_sprite);
         window.draw(whiteBlock);
 		moveObstacle(window, brick_wall_sprite, walls, 3, true, false, false, false);
+		rotateObstacles(window, brick_wall_sprite, walls, 2, 1, true);
 		updateSet(set, walls);
         if(index <= 50){
             window.draw(Blood_4);
@@ -382,12 +389,12 @@ int main(int argc, const char * argv[]) {
 }
 
 //delete game array
-void deleteGameArray(int** gameArray) {
-	for (int i = 0; i < 1000; i++) {
-		delete gameArray[i];
-	}
-	delete gameArray;
-}
+//void deleteGameArray(int** gameArray) {
+//	for (int i = 0; i < 1000; i++) {
+//		delete gameArray[i];
+//	}
+//	delete gameArray;
+//}
 
 
 void drawClock(sf::RenderWindow& window,sf::Text myNum){
@@ -451,9 +458,26 @@ void updateSet(unordered_set<array<int, 2>>& set, vector<obstacle> walls) {
 
 void drawObstalce(sf::RenderWindow& window, sf::Sprite sprite, vector <obstacle> walls) {
 	for (int i = 0; i < walls.size(); i++) {
-		sprite.setPosition(walls[i].getCoordinate().getX(), walls[i].getCoordinate().getY());
-		sprite.setRotation(walls[i].getAngle());
-		window.draw(sprite);
+		if (walls[i].getAngle() == 0) {
+			sprite.setPosition(walls[i].getCoordinate().getX(), walls[i].getCoordinate().getY());
+			sprite.setRotation(walls[i].getAngle());
+			window.draw(sprite);
+		}
+		else {
+			//set to origin to be the center of the wall
+
+			coordinate topleft = walls[i].getCoordinate();
+			int x = topleft.getX();
+			int y = topleft.getY();
+			sprite.setPosition(x, y);
+
+			sf::Transform transform;
+			transform.rotate(walls[i].getAngle(), x + walls[i].getWidth() / 2, y + walls[i].getHeight() / 2);
+
+			//sprite.setOrigin((float)(walls[i].getWidth() / 2), (float)(walls[i].getHeight() / 2));
+			//sprite.setRotation(walls[i].getAngle());
+			window.draw(sprite,  transform);
+		}
 	}
 }
 
@@ -481,6 +505,21 @@ void moveObstacle(sf::RenderWindow& window, sf::Sprite sprite, vector <obstacle>
 		coordinate newCoordinate(oldCoordinate.getX(), oldCoordinate.getY() + 1);
 		newWall.setCoordinate(newCoordinate);
 		walls[index] = newWall;
+	}
+	drawObstalce(window, sprite, walls);
+}
+
+void rotateObstacles(sf::RenderWindow& window, sf::Sprite sprite, vector<obstacle>& walls, int index, int angle, bool clockwise) {
+	obstacle oldWall = walls[index];
+
+
+	if (clockwise) {
+		int oldAngle = oldWall.getAngle();
+		walls[index].setAngle(oldAngle + angle);
+	}
+	else {
+		int oldAngle = oldWall.getAngle();
+		walls[index].setAngle(oldAngle - angle);
 	}
 	drawObstalce(window, sprite, walls);
 }
